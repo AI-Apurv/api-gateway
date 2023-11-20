@@ -42,12 +42,11 @@ export class ProductController implements OnModuleInit {
   }
 
   @Get('searchProduct/:name')
-  private async searchProduct(@Param('name') name:string){
-    const response = await this.svc.searchProduct({ name: name })
-    console.log('--------------',response)
-    return from([response]);
-    return this.svc.searchProduct({name});
+  private async searchProduct(@Param('name') name:string):Promise<Observable<SearchProductResponse>>{
+     const response:Observable<SearchProductResponse> = this.svc.searchProduct({name});
+     return response;
   }
+
 
   @UseGuards(AuthGuard)
   @Post('updateProduct')
