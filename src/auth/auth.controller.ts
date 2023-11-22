@@ -1,7 +1,7 @@
 import { Body, Controller, Inject, OnModuleInit, Patch, Post, Put, UseGuards, Request, Req } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { AuthServiceClient, RegisterResponse, RegisterRequest, AUTH_SERVICE_NAME, LoginRequest, LoginResponse, LogoutRequest, UpdateRequest, UpdateResponse, ChangePasswordRequest, ChangePasswordResponse, ForgetPasswordRequest, ForgetPasswordResponse, ResetPasswordRequest, ResetPasswordResponse } from './auth.pb';
+import { AuthServiceClient, RegisterResponse, RegisterRequest, AUTH_SERVICE_NAME, LoginRequest, LoginResponse, LogoutRequest, UpdateRequest, UpdateResponse, ChangePasswordRequest, ChangePasswordResponse, ForgetPasswordRequest, ForgetPasswordResponse, ResetPasswordRequest, ResetPasswordResponse, AddWalletAmountRequest, AddWalletAmountResponse } from './auth.pb';
 import { AuthGuard } from './auth.guard';
 
 @Controller('auth')
@@ -57,6 +57,17 @@ export class AuthController implements OnModuleInit {
   private async logout(@Request() req:any){
     const userId = req.user;
     return this.svc.logout({userId:userId});
+  }
+
+
+  @UseGuards(AuthGuard)
+  @Post('addWalletAmount')
+  private async addWalletAmount(@Body()body:AddWalletAmountRequest, @Req() req:any): Promise<Observable<AddWalletAmountResponse>>{
+    const userId = req.user;
+    return this.svc.addWalletAmount({
+      ...body,
+      userId:userId
+    })
   }
 
 
