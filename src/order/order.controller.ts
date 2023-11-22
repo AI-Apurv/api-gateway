@@ -1,7 +1,7 @@
 import { Controller, Inject, Post, OnModuleInit, UseGuards, Req, Body, Param, Put } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
-import { CreateOrderResponse, OrderServiceClient, ORDER_SERVICE_NAME, CreateOrderRequest, CancelOrderResponse, CancelOrderRequest } from './order.pb';
+import { CreateOrderResponse, OrderServiceClient, ORDER_SERVICE_NAME, CreateOrderRequest, CancelOrderResponse, CancelOrderRequest, AddCartRequest, AddCartResponse, UpdateCartRequest, UpdateCartResponse, GetCartItemRequest, GetCartItemResponse } from './order.pb';
 import { AuthGuard } from '../auth/auth.guard';
 
 @Controller('order')
@@ -17,13 +17,12 @@ export class OrderController implements OnModuleInit {
 
   @Post()
   @UseGuards(AuthGuard)
-  private async createOrder(@Body() payload:CreateOrderRequest,@Req() req: any): Promise<Observable<CreateOrderResponse>> {
+  private async createOrder(@Req() req: any): Promise<Observable<CreateOrderResponse>> {
     const userId = req.user;
     const email = req.email;
     const body:CreateOrderRequest = {
-      ...payload,
       userId:userId,
-      email:email
+      email: email
     }
     return this.svc.createOrder(body);
   }
@@ -38,4 +37,36 @@ export class OrderController implements OnModuleInit {
     }
     return this.svc.cancelOrder(body);
   }
+
+
+  @UseGuards(AuthGuard)
+  @Post('addCart')
+  private async addToCart(@Body()body:AddCartRequest, @Req() req:any):Promise<Observable<AddCartResponse>> {
+    const userId = req.user;
+    const payload = {
+      ...body,
+      userId: userId
+    }
+    return this.svc.addCart(payload);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('updateCart')
+  private async updateCart(@Body()body:UpdateCartRequest, @Req() req:any):Promise<Observable<UpdateCartResponse>> {
+    const userId = req.user;
+    const payload = {
+      ...body,
+      userId:userId
+    }
+    return this.svc.updateCart(payload);
+  }
+
+
+  @UseGuards(AuthGuard)
+  @Post('getCartDetails')
+  private async getCart(@Req() req:any):Promise<Observable<GetCartItemResponse>> {
+    const userId = req.user;
+    return this.svc.getCartDetails({userId:userId});
+  }
+  
 }

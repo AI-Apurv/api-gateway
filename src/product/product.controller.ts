@@ -59,7 +59,4 @@ export class ProductController implements OnModuleInit {
     return this.svc.updateProduct(payload);
   }
 
-
- 
-
 }
