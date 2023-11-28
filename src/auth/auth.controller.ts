@@ -13,20 +13,13 @@ import { Observable } from 'rxjs';
 import {
   AuthServiceClient,
   RegisterResponse,
-  RegisterRequest,
   AUTH_SERVICE_NAME,
-  LoginRequest,
   LoginResponse,
-  LogoutRequest,
-  UpdateRequest,
   UpdateResponse,
   ChangePasswordRequest,
   ChangePasswordResponse,
-  ForgetPasswordRequest,
   ForgetPasswordResponse,
-  ResetPasswordRequest,
   ResetPasswordResponse,
-  AddWalletAmountRequest,
   AddWalletAmountResponse,
 } from './auth.pb';
 import { AuthGuard } from './auth.guard';

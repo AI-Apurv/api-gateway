@@ -4,15 +4,13 @@ import {
   Inject,
   OnModuleInit,
   Param,
-  ParseIntPipe,
   UseGuards,
   Post,
   Body,
-  Request,
   Req,
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
-import { Observable, from } from 'rxjs';
+import { Observable } from 'rxjs';
 import {
   FindOneResponse,
   ProductServiceClient,
@@ -20,7 +18,6 @@ import {
   CreateProductResponse,
   CreateProductRequest,
   SearchProductResponse,
-  UpdateProductRequest,
   UpdateProductResponse,
 } from './product.pb';
 import { AuthGuard } from '../auth/auth.guard';

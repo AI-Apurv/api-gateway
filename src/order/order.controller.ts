@@ -19,14 +19,10 @@ import {
   CreateOrderRequest,
   CancelOrderResponse,
   CancelOrderRequest,
-  AddCartRequest,
   AddCartResponse,
-  UpdateCartRequest,
   UpdateCartResponse,
-  GetCartItemRequest,
   GetCartItemResponse,
   GetOrderDetailsResponse,
-  GetOrderDetailsRequest,
 } from './order.pb';
 import { AuthGuard } from '../auth/auth.guard';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
