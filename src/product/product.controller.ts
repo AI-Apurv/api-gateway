@@ -8,6 +8,8 @@ import {
   Post,
   Body,
   Req,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
@@ -23,6 +25,7 @@ import {
 import { AuthGuard } from '../auth/auth.guard';
 import { CreateProductRequestDto, UpdateProductDto } from './dto/product.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('Products')
 @Controller('product')
@@ -47,12 +50,15 @@ export class ProductController implements OnModuleInit {
   @ApiOperation({ summary: 'Create a product' })
   @UseGuards(AuthGuard)
   @Post()
+  @UseInterceptors(FileInterceptor('file'))
   private async createProduct(
     @Body() body: CreateProductRequestDto,
     @Req() req: any,
+    @UploadedFile() file: Express.Multer.File
   ): Promise<Observable<CreateProductResponse>> {
     const createProduct: CreateProductRequest = {
       ...body,
+      image: file.buffer,
       userId: req.user,
     };
     return this.svc.createProduct(createProduct);
