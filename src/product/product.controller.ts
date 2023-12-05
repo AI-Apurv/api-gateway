@@ -10,6 +10,7 @@ import {
   Req,
   UseInterceptors,
   UploadedFile,
+  BadRequestException,
 } from '@nestjs/common';
 import { ClientGrpc } from '@nestjs/microservices';
 import { Observable } from 'rxjs';
@@ -26,6 +27,8 @@ import { AuthGuard } from '../auth/auth.guard';
 import { CreateProductRequestDto, UpdateProductDto } from './dto/product.dto';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 
 @ApiTags('Products')
 @Controller('product')
@@ -45,12 +48,23 @@ export class ProductController implements OnModuleInit {
    * @description This function will used by user to add product for selling
    * @Body CreateProductRequestDto
    * @Payload name, description, stock, price
-   */
+   */ 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a product' })
   @UseGuards(AuthGuard)
   @Post()
-  @UseInterceptors(FileInterceptor('file'))
+  @UseInterceptors(FileInterceptor('file',{
+    fileFilter: (req, file, callback) => {
+      const allowed_file_types = ['image/png', 'image/jpeg', 'image/jpg'];
+      if (!allowed_file_types.includes(file.mimetype)) {
+        return callback(new BadRequestException('Only JPG/JPEG/png files are allowed!'), false);
+      }
+      callback(null, true);
+    },
+    limits:{
+      fileSize:1024*1024*2
+    }
+  }))
   private async createProduct(
     @Body() body: CreateProductRequestDto,
     @Req() req: any,
@@ -63,6 +77,7 @@ export class ProductController implements OnModuleInit {
     };
     return this.svc.createProduct(createProduct);
   }
+
 
   /**
    * @author Apurv
@@ -103,13 +118,16 @@ export class ProductController implements OnModuleInit {
   @ApiOperation({ summary: 'Update the product' })
   @UseGuards(AuthGuard)
   @Post('updateProduct')
+  @UseInterceptors(FileInterceptor('file'))
   private async updateProduct(
     @Body() body: UpdateProductDto,
     @Req() req: any,
+    @UploadedFile() file: Express.Multer.File
   ): Promise<Observable<UpdateProductResponse>> {
     const userId = req.user;
     const payload = {
       ...body,
+      image: file.buffer,
       userId: userId,
     };
     return this.svc.updateProduct(payload);

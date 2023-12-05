@@ -24,11 +24,11 @@ export class CreateProductRequestDto implements CreateProductRequest {
   description: string;
 
   @ApiProperty({ example: '100' })
-  // @IsNumber({ allowInfinity: false, allowNaN: false })
+  @IsString()
   stock: number;
 
   @ApiProperty({ example: '10000' })
-  // @IsNumber({ allowInfinity: false, allowNaN: false })
+  @IsString()
   price: number;
 
   @ApiProperty({type: 'string', format: 'binary'})
@@ -63,6 +63,9 @@ export class UpdateProductDto implements UpdateProductRequest {
   @IsNumber()
   @IsOptional()
   price: number;
+
+  @ApiProperty({type: 'string', format: 'binary'})
+  image:any
 
   @ApiHideProperty()
   userId: string;
